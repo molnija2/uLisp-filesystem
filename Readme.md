@@ -1,4 +1,4 @@
-This contains a file extension for microlisp developed by David Johnson-Davies (http://www.ulisp.com),
+This contains a extension file for microlisp developed by David Johnson-Davies (http://www.ulisp.com),
 for working with the file system. The file is intended for the Arduino environment for 
 ESP32 processors with a connection to an SD card.
 
