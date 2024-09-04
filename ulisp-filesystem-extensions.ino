@@ -151,7 +151,7 @@ object *fn_directory (object *args, object *env) {
 object *fn_probefile (object *args, object *env) {
 #if defined(sdcardsupport)
   (void) env;
-  int type = 0x08 | 0x08 ;  // Files and directories
+  int type = 0x04 | 0x08 ;  // Files and directories
   char pattern_string[256] = "*" ;
   char dirname_string[256] = "/";
 
@@ -164,7 +164,6 @@ object *fn_probefile (object *args, object *env) {
       else {  pfstring("\nprobe-file: First argument must be string.", pserial); return nil; }
   }
 
-  //pfstring(dirname_string, pserial);
 
   SD.begin(SDCARD_SS_PIN);
   if(SD.exists(pattern_string))  return tee; 
