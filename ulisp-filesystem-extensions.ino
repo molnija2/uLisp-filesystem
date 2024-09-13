@@ -151,12 +151,10 @@ object *fn_directory (object *args, object *env) {
 object *fn_probefile (object *args, object *env) {
 #if defined(sdcardsupport)
   (void) env;
-  int type = 0x04 | 0x08 ;  // Files and directories
   char pattern_string[256] = "*" ;
-  char dirname_string[256] = "/";
 
   if (args != NULL)
-  {   //  Directory name
+  {   //  File name
       if(stringp(car(args)))
       {
         cstring(car(args), pattern_string, 256) ;
@@ -182,11 +180,10 @@ object *fn_probefile (object *args, object *env) {
 object *fn_deletefile (object *args, object *env) {
 #if defined(sdcardsupport)
   (void) env;
-  int type = 0x8 | 0x4;  // Files and directories
-  char pattern_string[256] = "*" ;
+  char pattern_string[256] ;
 
   if (args != NULL)
-  {   //  Directory name
+  {   //  File name
       if(stringp(car(args)))
       {
         cstring(car(args), pattern_string, 256) ;
@@ -216,12 +213,11 @@ object *fn_deletefile (object *args, object *env) {
 object *fn_renamefile (object *args, object *env) {
 #if defined(sdcardsupport)
   (void) env;
-  int type = 0x8 ;  // Files and directories
-  char filename_string[256] = "*" ;
-  char newname_string[256] = "/";
+  char filename_string[256] ;
+  char newname_string[256] ;
 
   if (args != NULL)
-  {   //  Directory name
+  {   // File name
       if(stringp(car(args)))
       {
         cstring(car(args), filename_string, 256) ;
@@ -266,9 +262,8 @@ object *fn_renamefile (object *args, object *env) {
 object *fn_copyfile (object *args, object *env) {
 #if defined(sdcardsupport)
   (void) env;
-  int type = 0x8 ;  // Files and directories
-  char filename_string[256] = "*" ;
-  char newname_string[256] = "/";
+  char filename_string[256] ;
+  char newname_string[256] ;
 
   if (args != NULL)
   {   //  Directory name
@@ -319,8 +314,7 @@ object *fn_copyfile (object *args, object *env) {
 object *fn_ensuredirectoriesexist(object *args, object *env) {
 #if defined(sdcardsupport)
   (void) env;
-  int type = 0x8 ;  // Files and directories
-  char pattern_string[256] = "*" ;
+  char pattern_string[256] ;
  
   if (args != NULL)
   {   //  Directory name
