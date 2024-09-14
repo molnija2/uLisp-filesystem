@@ -145,13 +145,14 @@ object *fn_directory (object *args, object *env) {
 
 
 
-
+/* Insert '/' symbol into begin of filename if it is absent.
+"name" => "/name",  "home/name" => "/home/name"
+*/
 void test_filename(char *name)
 {
   int len, i ;
   char *cPtr ;
-  if(strchr(name,'/')!=NULL) return ;
-
+  if(name[0] == '/' ) return ;
   len = strlen(name) ;
   cPtr = &name[len] ;
   *(cPtr+1) = 0 ;
