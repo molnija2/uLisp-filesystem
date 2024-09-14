@@ -165,6 +165,11 @@ void test_filename(char *name)
 }
 
 
+
+/*(probe-file pathspec)  tests whether a file exists.
+Returns nil if there is no file named pathspec,
+and otherwise returns the truename of pathspec.
+*/
 object *fn_probefile (object *args, object *env) {
 #if defined(sdcardsupport)
   (void) env;
@@ -187,7 +192,9 @@ object *fn_probefile (object *args, object *env) {
 }
 
 
-
+/* (delete-file pathspec)   delete specified file.
+Returns true if success and otherwise returns nil.
+*/
 object *fn_deletefile (object *args, object *env) {
 #if defined(sdcardsupport)
   (void) env;
@@ -214,7 +221,9 @@ object *fn_deletefile (object *args, object *env) {
 }
 
 
-
+/* (delete-dir pathspec)   delete specified directory.
+Returns true if success and otherwise returns nil.
+*/
 object *fn_deletedir (object *args, object *env) {
 #if defined(sdcardsupport)
   (void) env;
@@ -241,7 +250,9 @@ object *fn_deletedir (object *args, object *env) {
 }
 
 
-
+/* (rename-file filespec newfile)  rename or moving specified file.
+Returns true if success and otherwise returns nil.
+*/
 object *fn_renamefile (object *args, object *env) {
 #if defined(sdcardsupport)
   (void) env;
@@ -287,6 +298,9 @@ object *fn_renamefile (object *args, object *env) {
 }
 
 
+/* (copy-file filespec newfile)  copy specified file.
+Returns true if success and otherwise returns nil.
+*/
 object *fn_copyfile (object *args, object *env) {
 #if defined(sdcardsupport)
   (void) env;
@@ -332,7 +346,10 @@ object *fn_copyfile (object *args, object *env) {
 
 
 
-
+/* (ensure-directories-exist pathspec)   Tests whether the specified
+directories actually exist, and attempts to create them if they do not.
+Returns true if success and otherwise returns nil.
+*/
 object *fn_ensuredirectoriesexist(object *args, object *env) {
 #if defined(sdcardsupport)
   (void) env;
