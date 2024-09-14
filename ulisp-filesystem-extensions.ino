@@ -274,9 +274,9 @@ object *fn_copyfile (object *args, object *env) {
         if (args != NULL)
             if(stringp(car(args)))
                 cstring(car(args), newname_string, 256) ;
-            else  {  pfstring("\nrename-file: Second argument must be string.", pserial); return nil; }
+            else  {  pfstring("\ncopy-file: Second argument must be string.", pserial); return nil; }
       }
-      else  {  pfstring("\nrename-file: First argument must be string.", pserial); return nil; }
+      else  {  pfstring("\ncopy-file: First argument must be string.", pserial); return nil; }
   }
 
   //pfstring("\nrename-file: not supported.", pserial);
@@ -359,15 +359,19 @@ const char doc_probefile[] PROGMEM = "(probe-file pathspec)\n"
 "tests whether a file exists.\n"
 " Returns nil if there is no file named pathspec,"
 " and otherwise returns the truename of pathspec.";
+
 const char doc_deletefile[] PROGMEM = "(delete-file pathspec)\n"
 "delete specified file.\n"
 " Returns true if success and otherwise returns nil.";
+
 const char doc_renamefile[] PROGMEM = "(rename-file filespec newfile)\n"
 "rename or moving specified file.\n"
 " Returns true if success and otherwise returns nil.";
+
 const char doc_copyfile[] PROGMEM = "(copy-file filespec newfile)\n"
 "copy specified file.\n"
 " Returns true if success and otherwise returns nil.";
+
 const char doc_ensuredirectoriesexist[] PROGMEM = "(ensure-directories-exist pathspec)\n"
 "Tests whether the specified directories actually exist,"
 " and attempts to create them if they do not.\n"
