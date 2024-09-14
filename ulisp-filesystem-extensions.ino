@@ -151,7 +151,7 @@ object *fn_directory (object *args, object *env) {
 object *fn_probefile (object *args, object *env) {
 #if defined(sdcardsupport)
   (void) env;
-  char pattern_string[256] = "*" ;
+  char pattern_string[256] ;
 
   if (args != NULL)
   {   //  File name
