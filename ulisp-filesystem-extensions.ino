@@ -146,6 +146,23 @@ object *fn_directory (object *args, object *env) {
 
 
 
+void test_filename(char *name)
+{
+  int len, i ;
+  char *cPtr ;
+  if(strchr(name,'/')!=NULL) return ;
+
+  len = strlen(name) ;
+  cPtr = &name[len] ;
+  *(cPtr+1) = 0 ;
+
+  for(i=0;i<len;i++) {
+      *cPtr= *(cPtr-1) ;
+      cPtr -- ;  
+  }
+
+  name[0] = '/' ;
+}
 
 
 object *fn_probefile (object *args, object *env) {
@@ -153,19 +170,13 @@ object *fn_probefile (object *args, object *env) {
   (void) env;
   char pattern_string[256] ;
 
-  if (args != NULL)
-  {   //  File name
-      if(stringp(car(args)))
-      {
-        cstring(car(args), pattern_string, 256) ;
-      }
-      else {  pfstring("\nprobe-file: First argument must be string.", pserial); return nil; }
-  }
-
+  if(stringp(car(args))) cstring(car(args), pattern_string, 256) ;
+  else {  pfstring("\nprobe-file: First argument must be string.\n", pserial); return nil; }
+ 
+  test_filename(pattern_string) ;
 
   SD.begin(SDCARD_SS_PIN);
   if(SD.exists(pattern_string))  return tee; 
-
   
   return nil;
 #else
@@ -182,14 +193,10 @@ object *fn_deletefile (object *args, object *env) {
   (void) env;
   char pattern_string[256] ;
 
-  if (args != NULL)
-  {   //  File name
-      if(stringp(car(args)))
-      {
-        cstring(car(args), pattern_string, 256) ;
-      }
-      else {  pfstring("\ndelete-file: First argument must be string.", pserial); return nil; }
-  }
+  if(stringp(car(args))) cstring(car(args), pattern_string, 256) ;
+  else {  pfstring("\ndelete-file: First argument must be string.\n", pserial); return nil; }
+
+  test_filename(pattern_string) ;
 
   SD.begin(SDCARD_SS_PIN);
   if(SD.exists(pattern_string))
@@ -197,7 +204,6 @@ object *fn_deletefile (object *args, object *env) {
     if(SD.remove(pattern_string)) return tee;
   }
   else return tee;
-
 
   return nil;
 #else
@@ -209,6 +215,32 @@ object *fn_deletefile (object *args, object *env) {
 
 
 
+object *fn_deletedir (object *args, object *env) {
+#if defined(sdcardsupport)
+  (void) env;
+  char pattern_string[256] ;
+
+  if(stringp(car(args))) cstring(car(args), pattern_string, 256) ;
+  else {  pfstring("\ndelete-file: First argument must be string.\n", pserial); return nil; }
+
+  test_filename(pattern_string) ;
+
+  SD.begin(SDCARD_SS_PIN);
+  if(SD.exists(pattern_string))
+  {
+     if(SD.rmdir(pattern_string)) return tee;
+  }
+  else return tee;
+
+  return nil;
+#else
+  (void) args, (void) env;
+  error2("not supported");
+  return nil;
+#endif
+}
+
+
 
 object *fn_renamefile (object *args, object *env) {
 #if defined(sdcardsupport)
@@ -216,24 +248,20 @@ object *fn_renamefile (object *args, object *env) {
   char filename_string[256] ;
   char newname_string[256] ;
 
-  if (args != NULL)
-  {   // File name
-      if(stringp(car(args)))
-      {
-        cstring(car(args), filename_string, 256) ;
-        args = cdr(args);
-        if (args != NULL)
-            if(stringp(car(args)))
-                cstring(car(args), newname_string, 256) ;
-            else  {  pfstring("\nrename-file: Second argument must be string.", pserial); return nil; }
-      }
-      else  {  pfstring("\nrename-file: First argument must be string.", pserial); return nil; }
-  }
+  if(stringp(car(args))) cstring(car(args), filename_string, 256) ;
+  else  {  pfstring("\ncopy-file: First argument must be string.\n", pserial); return nil; }
 
-  //pfstring("\nrename-file: not supported.", pserial);
+  args = cdr(args);
+  
+  if(stringp(car(args)))
+    cstring(car(args), newname_string, 256) ;
+  else  {  pfstring("\ncopy-file: Second argument must be string.\n", pserial); return nil; }
+
+  test_filename(filename_string) ;
+  test_filename(newname_string) ;
 
   SD.begin(SDCARD_SS_PIN);
-  if (!SD.exists(filename_string)) {  pfstring("file not exists", pserial); return nil; }
+  if (!SD.exists(filename_string)) {  pfstring("file not exists.\n", pserial); return nil; }
 
   File fp_source = SD.open(filename_string, FILE_READ);
 
@@ -265,24 +293,20 @@ object *fn_copyfile (object *args, object *env) {
   char filename_string[256] ;
   char newname_string[256] ;
 
-  if (args != NULL)
-  {   //  Directory name
-      if(stringp(car(args)))
-      {
-        cstring(car(args), filename_string, 256) ;
-        args = cdr(args);
-        if (args != NULL)
-            if(stringp(car(args)))
-                cstring(car(args), newname_string, 256) ;
-            else  {  pfstring("\ncopy-file: Second argument must be string.", pserial); return nil; }
-      }
-      else  {  pfstring("\ncopy-file: First argument must be string.", pserial); return nil; }
-  }
+  if(stringp(car(args))) cstring(car(args), filename_string, 256) ;
+  else  {  pfstring("\ncopy-file: First argument must be string.\n", pserial); return nil; }
 
-  //pfstring("\nrename-file: not supported.", pserial);
+  args = cdr(args);
+
+  if(stringp(car(args)))
+    cstring(car(args), newname_string, 256) ;
+  else  {  pfstring("\ncopy-file: Second argument must be string.\n", pserial); return nil; }
+
+  test_filename(filename_string) ;
+  test_filename(newname_string) ;
 
   SD.begin(SDCARD_SS_PIN);
-  if (!SD.exists(filename_string)) {  pfstring("file not exists", pserial); return nil; }
+  if (!SD.exists(filename_string)) {  pfstring("file not exists.\n", pserial); return nil; }
 
   File fp_source = SD.open(filename_string, FILE_READ);
 
@@ -309,21 +333,15 @@ object *fn_copyfile (object *args, object *env) {
 
 
 
-
-
 object *fn_ensuredirectoriesexist(object *args, object *env) {
 #if defined(sdcardsupport)
   (void) env;
   char pattern_string[256] ;
  
-  if (args != NULL)
-  {   //  Directory name
-      if(stringp(car(args)))
-      {
-        cstring(car(args), pattern_string, 256) ;
-      }
-      else  {  pfstring("\nError: argument must be string", pserial); return nil; }
-  }
+  if(stringp(car(args))) cstring(car(args), pattern_string, 256) ;
+  else  {  pfstring("\nError: argument must be string\n", pserial); return nil; }
+
+  test_filename(pattern_string) ;
 
   SD.begin(SDCARD_SS_PIN);
   if(!SD.exists(pattern_string))
@@ -347,6 +365,7 @@ object *fn_ensuredirectoriesexist(object *args, object *env) {
 
 const char string_probefile[] PROGMEM = "probe-file";
 const char string_deletefile[] PROGMEM = "delete-file";
+const char string_deletefile[] PROGMEM = "delete-dir";
 const char string_renamefile[] PROGMEM = "rename-file";
 const char string_copyfile[] PROGMEM = "copy-file";
 const char string_ensuredirectoriesexist[] PROGMEM = "ensure-directories-exist";
@@ -362,6 +381,10 @@ const char doc_probefile[] PROGMEM = "(probe-file pathspec)\n"
 
 const char doc_deletefile[] PROGMEM = "(delete-file pathspec)\n"
 "delete specified file.\n"
+" Returns true if success and otherwise returns nil.";
+
+const char doc_deletedir[] PROGMEM = "(delete-dir pathspec)\n"
+"delete specified directory.\n"
 " Returns true if success and otherwise returns nil.";
 
 const char doc_renamefile[] PROGMEM = "(rename-file filespec newfile)\n"
@@ -381,13 +404,12 @@ const char doc_ensuredirectoriesexist[] PROGMEM = "(ensure-directories-exist pat
 
 // Symbol lookup table
 const tbl_entry_t lookup_table2[] PROGMEM  = {
-
     { string_probefile, fn_probefile, 0211, doc_probefile },
     { string_renamefile, fn_renamefile, 0222, doc_renamefile },
     { string_copyfile, fn_copyfile, 0222, doc_copyfile },
     { string_deletefile, fn_deletefile, 0211, doc_deletefile },
     { string_ensuredirectoriesexist, fn_ensuredirectoriesexist, 0211, doc_ensuredirectoriesexist },
-
+    { string_deletedir, fn_deletedir, 0211, doc_deletedir },
 };
 
 
