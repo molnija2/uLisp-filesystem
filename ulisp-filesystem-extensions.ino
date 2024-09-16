@@ -182,7 +182,7 @@ object *fn_probefile (object *args, object *env) {
   test_filename(pattern_string) ;
 
   SD.begin(SDCARD_SS_PIN);
-  if(SD.exists(pattern_string))  return tee; 
+  if(SD.exists(pattern_string))  return car(args); 
   
   return nil;
 #else
