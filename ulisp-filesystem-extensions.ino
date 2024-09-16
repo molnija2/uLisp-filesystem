@@ -101,13 +101,14 @@ object *fn_directory (object *args, object *env) {
             while((pattern_bgn!=dirname_string)&&(*pattern_bgn!='/')) pattern_bgn -- ;
             if(*pattern_bgn=='/')
             {
-                *pattern_bgn = 0x0 ;
                 pattern_bgn ++ ;
+                strcpy(pattern_string, pattern_bgn);
+                *pattern_bgn = 0x0 ; // set 0x00 into dirname_string 
             }
-            strcpy(pattern_string, pattern_bgn);
             if(!(*dirname_string))
             {
-                strcpy(dirname_string, "/"); // Dir name "/" restore
+              strcpy(pattern_string, dirname_string);
+              strcpy(dirname_string, "/"); // Dir name "/" restore
             }
         }
       }
