@@ -384,7 +384,7 @@ object *fn_ensuredirectoriesexist(object *args, object *env) {
 
 const char string_probefile[] PROGMEM = "probe-file";
 const char string_deletefile[] PROGMEM = "delete-file";
-const char string_deletefile[] PROGMEM = "delete-dir";
+const char string_deletedir[] PROGMEM = "delete-dir";
 const char string_renamefile[] PROGMEM = "rename-file";
 const char string_copyfile[] PROGMEM = "copy-file";
 const char string_ensuredirectoriesexist[] PROGMEM = "ensure-directories-exist";
