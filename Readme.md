@@ -29,3 +29,5 @@ and attempts to create them if they do not. Returns true if success and otherwis
   There may be minor inaccuracies in the programs. They can only be found and corrected when used. Therefore, I ask you to report incorrect operation of functions.
 
 Best regards.
+Anatoly Shcherbakov.
+molnija2@inbox.ru
