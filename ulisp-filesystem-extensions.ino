@@ -105,11 +105,14 @@ object *fn_directory (object *args, object *env) {
                 strcpy(pattern_string, pattern_bgn);
                 *pattern_bgn = 0x0 ; // set 0x00 into dirname_string 
             }
-            if(!(*dirname_string))
+            else
             {
-              strcpy(pattern_string, dirname_string);
-              strcpy(dirname_string, "/"); // Dir name "/" restore
+                strcpy(pattern_string, pattern_bgn);
+                strcpy(dirname_string, "/"); 
             }
+            
+            if(!(*dirname_string))
+                strcpy(dirname_string, "/"); // Dir name "/" restore
         }
       }
   }
