@@ -4,10 +4,10 @@ ESP32 processors with a connection to an SD card.
 
 
 
-(probe-file pathspec)  tests whether a file exists.
+    (probe-file pathspec)  tests whether a file exists.
 Returns nil if there is no file named pathspec, and otherwise returns the truename of pathspec.
 
-(delete-file pathspec)  delete specified file.
+    (delete-file pathspec)  delete specified file.
 Returns true if success and otherwise returns nil.
 
 (delete-dir pathspec)  delete specified directory.
