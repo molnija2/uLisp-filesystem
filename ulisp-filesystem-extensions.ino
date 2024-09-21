@@ -211,10 +211,10 @@ object *fn_deletefile (object *args, object *env) {
   if(SD.exists(pattern_string))
   {
     if(SD.remove(pattern_string)) return tee;
+    else return nil;
   }
-  else return tee;
-
-  return nil;
+ 
+  return tee;
 #else
   (void) args, (void) env;
   error2("not supported");
@@ -240,10 +240,10 @@ object *fn_deletedir (object *args, object *env) {
   if(SD.exists(pattern_string))
   {
      if(SD.rmdir(pattern_string)) return tee;
-  }
-  else return tee;
-
-  return nil;
+     else return nil;
+}
+  
+  return tee;
 #else
   (void) args, (void) env;
   error2("not supported");
@@ -262,13 +262,13 @@ object *fn_renamefile (object *args, object *env) {
   char newname_string[256] ;
 
   if(stringp(car(args))) cstring(car(args), filename_string, 256) ;
-  else  {  pfstring("\ncopy-file: First argument must be string.\n", pserial); return nil; }
+  else  {  pfstring("\nrename-file: First argument must be string.\n", pserial); return nil; }
 
   args = cdr(args);
   
   if(stringp(car(args)))
     cstring(car(args), newname_string, 256) ;
-  else  {  pfstring("\ncopy-file: Second argument must be string.\n", pserial); return nil; }
+  else  {  pfstring("\nrename-file: Second argument must be string.\n", pserial); return nil; }
 
   test_filename(filename_string) ;
   test_filename(newname_string) ;
