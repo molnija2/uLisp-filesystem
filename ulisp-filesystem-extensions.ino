@@ -358,7 +358,7 @@ object *fn_ensuredirectoriesexist(object *args, object *env) {
   char pattern_string[256] ;
  
   if(stringp(car(args))) cstring(car(args), pattern_string, 256) ;
-  else  {  pfstring("\nError: argument must be string\n", pserial); return nil; }
+  else  {  pfstring("\nensure-directories-exist: argument must be string\n", pserial); return nil; }
 
   test_filename(pattern_string) ;
 
