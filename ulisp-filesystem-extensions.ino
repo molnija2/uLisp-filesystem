@@ -32,7 +32,7 @@ int findpattern(char *pattern, char *name)
     lenn = strlen(name) ;
     while(lenp<=lenn)
     {
-        if(strncmp(name,pattern,lenp)==0) return i;
+        if(strcmp(name,pattern)==0) return i;
         name++ ;
         lenn-- ;
         i++ ;
