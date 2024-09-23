@@ -32,7 +32,7 @@ int findpattern(char *pattern, char *name)
     lenn = strlen(name) ;
     while(lenp<=lenn)
     {
-        if(strcmp(name,pattern)==0) return i;
+        if(strncmp(name,pattern,lenp)==0) return i;
         name++ ;
         lenn-- ;
         i++ ;
@@ -48,25 +48,34 @@ int selection(char *name, char *filemask )
     char file_pattern[256] ;
     int i;
     int imaskpos = 0, inamepos = 0 ;
-    i = fillpattern(&filemask[imaskpos], file_pattern);
-    if(i==-1) return 1 ;
+    i = fillpattern(filemask, file_pattern);
+    if(i==-1) return -1 ;
+
     if(i>0)
     {
-        if(strncmp(&file_pattern[imaskpos],&name[inamepos],i)!=0) return 0 ;
+        if(strncmp(file_pattern,name,i)!=0) return 0 ;
     }
 
-    imaskpos += i+1 ;
+    imaskpos += i+1 ; // next position after '*'
     inamepos += i ;
     do{
-        i = fillpattern(&filemask[imaskpos], file_pattern);
-        if(i <= 0) return 1 ;
-        inamepos = findpattern(file_pattern, &name[inamepos]);
-        if(inamepos<0) return 0 ;
-        inamepos += i ;
-        imaskpos += i+1 ;
+        // take mask next fragment between '*' symbols
+        i = fillpattern(&filemask[imaskpos], file_pattern);  
+        if(i == -1 ) return 1 ;
+     
+        int k = findpattern(file_pattern, &name[inamepos]);
+        if(k==-1) return 0 ;
+        imaskpos += i ;
+        inamepos += k ;
+        if(filemask[imaskpos] == '*') imaskpos++ ;
+        else
+            if(name[inamepos+i] != 0) return 0 ;  
+            // the end of pattern but not end of name
+        
     }while(1) ;
 return 0;
 }
+
 
 /*
   (directory [pattern])
