@@ -145,7 +145,7 @@ object *fn_directory (object *args, object *env) {
         }
       }
       else {
-        error("Argument must be string",car(args));
+        error("argument must be string",car(args));
         return nil;
       }
   }
@@ -215,7 +215,7 @@ object *fn_probefile (object *args, object *env) {
   int findDir = 0 ;
 
   if(stringp(car(args))) cstring(car(args), pattern_string, 256) ;
-  else {  pfstring("\nprobe-file: First argument must be string.\n", pserial); return nil; }
+  else {  error("argument must be string", car(args)); return nil; }
  
   if(pattern_string[strlen(pattern_string)-1] == '/') {
     pattern_string[strlen(pattern_string)-1] = 0x0 ;
@@ -245,6 +245,7 @@ object *fn_probefile (object *args, object *env) {
 #endif
 }
 
+
 /* (delete-file pathspec)   delete specified file.
 Returns true if success and otherwise returns nil.
 */
@@ -254,7 +255,7 @@ object *fn_deletefile (object *args, object *env) {
   char pattern_string[256] ;
 
   if(stringp(car(args))) cstring(car(args), pattern_string, 256) ;
-  else {  pfstring("\ndelete-file: First argument must be string.\n", pserial); return nil; }
+  else {  error("argument must be string", car(args)); return nil; }
 
   test_filename(pattern_string) ;
 
@@ -283,7 +284,7 @@ object *fn_deletedir (object *args, object *env) {
   char pattern_string[256] ;
 
   if(stringp(car(args))) cstring(car(args), pattern_string, 256) ;
-  else {  pfstring("\ndelete-file: First argument must be string.\n", pserial); return nil; }
+  else {  error("argument must be string", car(args)); return nil; }
 
   test_filename(pattern_string) ;
 
@@ -292,7 +293,7 @@ object *fn_deletedir (object *args, object *env) {
   {
      if(SD.rmdir(pattern_string)) return tee;
      else return nil;
-}
+  }
   
   return tee;
 #else
@@ -303,7 +304,7 @@ object *fn_deletedir (object *args, object *env) {
 }
 
 
-/* (rename-file filespec newfile)  rename or moving specified file.
+/* (rename-file pathspec newfile)  rename or moving specified file.
 Returns true if success and otherwise returns nil.
 */
 object *fn_renamefile (object *args, object *env) {
@@ -311,27 +312,32 @@ object *fn_renamefile (object *args, object *env) {
   (void) env;
   char filename_string[256] ;
   char newname_string[256] ;
+  object *firstarg = car(args);
 
   if(stringp(car(args))) cstring(car(args), filename_string, 256) ;
-  else  {  pfstring("\nrename-file: First argument must be string.\n", pserial); return nil; }
+  else  {  error("first argument must be string", car(args)); return nil; }
 
   args = cdr(args);
   
   if(stringp(car(args)))
     cstring(car(args), newname_string, 256) ;
-  else  {  pfstring("\nrename-file: Second argument must be string.\n", pserial); return nil; }
+  else  {  error("second argument must be string", car(args)); return nil; }
 
   test_filename(filename_string) ;
   test_filename(newname_string) ;
 
   SDBegin();
-  if (!SD.exists(filename_string)) {  pfstring("file not exists.\n", pserial); return nil; }
+  if (!SD.exists(filename_string)) {  error("File not exists", firstarg); return nil; }
+  
 
   File fp_source = SD.open(filename_string, FILE_READ);
+  if (fp_source.isDirectory()) { 
+      fp_source.close() ;
+      error("argument must be a file", firstarg); return nil; }
 
   if (SD.exists(newname_string)) SD.remove(newname_string) ;
   File fp_dest = SD.open(newname_string, FILE_WRITE);
-  if (!fp_dest) {  pfstring("Cannot open destination file.\n", pserial); return nil; }
+  if (!fp_dest) {  error("cannot open destination file", car(args)); return nil; }
 
   uint32_t i, sz ;
   sz = fp_source.size();
@@ -351,7 +357,7 @@ object *fn_renamefile (object *args, object *env) {
 }
 
 
-/* (copy-file filespec newfile)  copy specified file.
+/* (copy-file pathspec newfile)  copy specified file.
 Returns true if success and otherwise returns nil.
 */
 object *fn_copyfile (object *args, object *env) {
@@ -359,27 +365,31 @@ object *fn_copyfile (object *args, object *env) {
   (void) env;
   char filename_string[256] ;
   char newname_string[256] ;
+  object *firstarg = car(args);
 
   if(stringp(car(args))) cstring(car(args), filename_string, 256) ;
-  else  {  pfstring("\ncopy-file: First argument must be string.\n", pserial); return nil; }
+  else  {  error("first argument must be string", car(args)); return nil; }
 
   args = cdr(args);
 
   if(stringp(car(args)))
     cstring(car(args), newname_string, 256) ;
-  else  {  pfstring("\ncopy-file: Second argument must be string.\n", pserial); return nil; }
+  else  {  error("second argument must be string", car(args)); return nil; }
 
   test_filename(filename_string) ;
   test_filename(newname_string) ;
 
   SDBegin();
-  if (!SD.exists(filename_string)) {  pfstring("file not exists.\n", pserial); return nil; }
+  if (!SD.exists(filename_string)) {  error("File not exists", firstarg); return nil; }
 
   File fp_source = SD.open(filename_string, FILE_READ);
+  if (fp_source.isDirectory()) { 
+      fp_source.close() ;
+      error("argument must be a file", firstarg); return nil; }
 
   if (SD.exists(newname_string)) SD.remove(newname_string) ;
   File fp_dest = SD.open(newname_string,FILE_WRITE);
-  if (!fp_dest) {  pfstring("Cannot open destination file.\n", pserial); return nil; }
+  if (!fp_dest) {  error("cannot open destination file", car(args)); return nil; }
 
   uint16_t i, sz ;
   sz = fp_source.size();
@@ -409,7 +419,7 @@ object *fn_ensuredirectoriesexist(object *args, object *env) {
   char pattern_string[256] ;
  
   if(stringp(car(args))) cstring(car(args), pattern_string, 256) ;
-  else  {  pfstring("\nensure-directories-exist: argument must be string\n", pserial); return nil; }
+  else  {  error("argument must be string", car(args)); return nil; }
 
   test_filename(pattern_string) ;
 
@@ -427,6 +437,7 @@ object *fn_ensuredirectoriesexist(object *args, object *env) {
   return nil;
 #endif
 }
+
 
 
 
@@ -457,11 +468,11 @@ const char doc_deletedir[] PROGMEM = "(delete-dir pathspec)\n"
 "delete specified directory.\n"
 " Returns true if success and otherwise returns nil.";
 
-const char doc_renamefile[] PROGMEM = "(rename-file filespec newfile)\n"
+const char doc_renamefile[] PROGMEM = "(rename-file pathspec newfile)\n"
 "rename or moving specified file.\n"
 " Returns true if success and otherwise returns nil.";
 
-const char doc_copyfile[] PROGMEM = "(copy-file filespec newfile)\n"
+const char doc_copyfile[] PROGMEM = "(copy-file pathspec newfile)\n"
 "copy specified file.\n"
 " Returns true if success and otherwise returns nil.";
 
