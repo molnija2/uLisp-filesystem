@@ -5,7 +5,7 @@ ESP32 processors with a connection to an SD card.
 
 
     (probe-file pathspec)  
-tests whether a file exists. Returns nil if there is no file named pathspec, and otherwise returns the truename of pathspec.
+tests whether a file exists. Returns nil if there is no file named pathspec, and otherwise returns the name of pathspec. It is most near to Common Lisp standard command "probe-file" which returns the true name of pathspec. True name can be different from pathspec if it is symbolic link.
 
     (delete-file pathspec)  
 delete specified file. Returns true if success and otherwise returns nil.
@@ -14,10 +14,10 @@ delete specified file. Returns true if success and otherwise returns nil.
 delete specified directory.
 Returns true if success and otherwise returns nil.
 
-    (rename-file filespec newfile)
+    (rename-file pathspec newfile)
 rename or moving specified file. Returns true if success and otherwise returns nil.
 
-    (copy-file filespec newfile)   
+    (copy-file pathspec newfile)   
 Сopy specified file. Returns true if success and otherwise returns nil.
 
     (ensure-directories-exist pathspec)
