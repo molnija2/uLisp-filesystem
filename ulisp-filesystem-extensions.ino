@@ -123,13 +123,37 @@ object *fn_directory (object *args, object *env) {
             if(!(*dirname_string))
                 strcpy(dirname_string, "/"); // Dir name "/" restore
         }
+        else
+        {
+            // There is pattern string without '*'-symbols
+            pattern_bgn = &dirname_string[strlen(dirname_string)-1] ;
+            while((pattern_bgn!=dirname_string)&&(*pattern_bgn!='/')) pattern_bgn -- ;
+            if(*pattern_bgn=='/')
+            {
+                pattern_bgn ++ ;
+                strcpy(pattern_string, pattern_bgn);
+                *pattern_bgn = 0x0 ; // set 0x00 into dirname_string 
+            }
+            else
+            {
+                strcpy(pattern_string, pattern_bgn);
+                strcpy(dirname_string, "/"); 
+            }
+            
+            if(!(*dirname_string))
+                strcpy(dirname_string, "/"); // Dir name "/" restore
+        }
+      }
+      else {
+        error("Argument must be string",car(args));
+        return nil;
       }
   }
 
   object *result = cons(NULL, NULL);
   object *ptr = result;
 
-  SD.begin(SDCARD_SS_PIN);
+  SDBegin();
   File root = SD.open(dirname_string);
   if (!root){  pfstring("problem reading from SD card", pserial); return nil; }
 
@@ -188,15 +212,31 @@ object *fn_probefile (object *args, object *env) {
 #if defined(sdcardsupport)
   (void) env;
   char pattern_string[256] ;
+  int findDir = 0 ;
 
   if(stringp(car(args))) cstring(car(args), pattern_string, 256) ;
   else {  pfstring("\nprobe-file: First argument must be string.\n", pserial); return nil; }
  
+  if(pattern_string[strlen(pattern_string)-1] == '/') {
+    pattern_string[strlen(pattern_string)-1] = 0x0 ;
+    findDir = 1 ;
+  }
+
   test_filename(pattern_string) ;
 
-  SD.begin(SDCARD_SS_PIN);
-  if(SD.exists(pattern_string))  return car(args); 
-  
+  SDBegin();
+  if(SD.exists(pattern_string)) {
+    File entry = SD.open(pattern_string) ;
+    if( (entry.isDirectory()) && (findDir)) {
+      entry.close();
+      return car(args);
+    }
+    else if( (!entry.isDirectory() )&& (!findDir)) {
+      entry.close();
+      return car(args);
+    }
+  }
+
   return nil;
 #else
   (void) args, (void) env;
@@ -204,7 +244,6 @@ object *fn_probefile (object *args, object *env) {
   return nil;
 #endif
 }
-
 
 /* (delete-file pathspec)   delete specified file.
 Returns true if success and otherwise returns nil.
@@ -219,7 +258,7 @@ object *fn_deletefile (object *args, object *env) {
 
   test_filename(pattern_string) ;
 
-  SD.begin(SDCARD_SS_PIN);
+  SDBegin();
   if(SD.exists(pattern_string))
   {
     if(SD.remove(pattern_string)) return tee;
@@ -248,7 +287,7 @@ object *fn_deletedir (object *args, object *env) {
 
   test_filename(pattern_string) ;
 
-  SD.begin(SDCARD_SS_PIN);
+  SDBegin();
   if(SD.exists(pattern_string))
   {
      if(SD.rmdir(pattern_string)) return tee;
@@ -285,7 +324,7 @@ object *fn_renamefile (object *args, object *env) {
   test_filename(filename_string) ;
   test_filename(newname_string) ;
 
-  SD.begin(SDCARD_SS_PIN);
+  SDBegin();
   if (!SD.exists(filename_string)) {  pfstring("file not exists.\n", pserial); return nil; }
 
   File fp_source = SD.open(filename_string, FILE_READ);
@@ -333,7 +372,7 @@ object *fn_copyfile (object *args, object *env) {
   test_filename(filename_string) ;
   test_filename(newname_string) ;
 
-  SD.begin(SDCARD_SS_PIN);
+  SDBegin();
   if (!SD.exists(filename_string)) {  pfstring("file not exists.\n", pserial); return nil; }
 
   File fp_source = SD.open(filename_string, FILE_READ);
@@ -374,7 +413,7 @@ object *fn_ensuredirectoriesexist(object *args, object *env) {
 
   test_filename(pattern_string) ;
 
-  SD.begin(SDCARD_SS_PIN);
+  SDBegin();
   if(!SD.exists(pattern_string))
   {
     if(SD.mkdir(pattern_string)) return tee;
