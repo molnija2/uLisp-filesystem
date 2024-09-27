@@ -155,7 +155,7 @@ object *fn_directory (object *args, object *env) {
 
   SDBegin();
   File root = SD.open(dirname_string);
-  if (!root){  pfstring("problem reading from SD card", pserial); return nil; }
+  if (!root){  error("cannot open directory", car(args)); return nil; }
 
   while (true) {
       File entry = root.openNextFile();
@@ -179,7 +179,6 @@ object *fn_directory (object *args, object *env) {
   return nil;
 #endif
 }
-
 
 
 /* Insert '/' symbol into begin of filename if it is absent.
