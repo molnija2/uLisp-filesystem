@@ -105,44 +105,24 @@ object *fn_directory (object *args, object *env) {
         else type = 0x8 ;
 
         char *pattern_bgn = strchr(dirname_string,'*') ;
-        if(pattern_bgn)
-        {   // There is pattern string with '*'-symbols
-            while((pattern_bgn!=dirname_string)&&(*pattern_bgn!='/')) pattern_bgn -- ;
-            if(*pattern_bgn=='/')
-            {
-                pattern_bgn ++ ;
-                strcpy(pattern_string, pattern_bgn);
-                *pattern_bgn = 0x0 ; // set 0x00 into dirname_string 
-            }
-            else
-            {
-                strcpy(pattern_string, pattern_bgn);
-                strcpy(dirname_string, "/"); 
-            }
-            
-            if(!(*dirname_string))
-                strcpy(dirname_string, "/"); // Dir name "/" restore
+        if(!pattern_bgn)
+           pattern_bgn = &dirname_string[strlen(dirname_string)-1] ;
+       
+        while((pattern_bgn!=dirname_string)&&(*pattern_bgn!='/')) pattern_bgn -- ;
+        if(*pattern_bgn=='/')
+        {
+            pattern_bgn ++ ;
+            strcpy(pattern_string, pattern_bgn);
+            *pattern_bgn = 0x0 ; // set 0x00 into dirname_string 
         }
         else
         {
-            // There is pattern string without '*'-symbols
-            pattern_bgn = &dirname_string[strlen(dirname_string)-1] ;
-            while((pattern_bgn!=dirname_string)&&(*pattern_bgn!='/')) pattern_bgn -- ;
-            if(*pattern_bgn=='/')
-            {
-                pattern_bgn ++ ;
-                strcpy(pattern_string, pattern_bgn);
-                *pattern_bgn = 0x0 ; // set 0x00 into dirname_string 
-            }
-            else
-            {
-                strcpy(pattern_string, pattern_bgn);
-                strcpy(dirname_string, "/"); 
-            }
-            
-            if(!(*dirname_string))
-                strcpy(dirname_string, "/"); // Dir name "/" restore
+            strcpy(pattern_string, pattern_bgn);
+            strcpy(dirname_string, "/"); 
         }
+            
+        if(!(*dirname_string))
+                strcpy(dirname_string, "/"); // Dir name "/" restore
       }
       else {
         error("argument must be string",car(args));
