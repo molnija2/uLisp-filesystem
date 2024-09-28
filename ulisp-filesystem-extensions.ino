@@ -24,15 +24,15 @@ int fillpattern(char *mask, char *pattern)
     return i ;
 }
 
-int findpattern(char *pattern, char *name)
+int findpattern(char *pattern, char *mask)
 {
     int i = 0 , lenp, lenn ;
     if(*pattern==0) return -1 ;
     lenp = strlen(pattern) ;
-    lenn = strlen(name) ;
+    lenn = strlen(mask) ;
     while(lenp<=lenn)
     {
-        if(strncmp(name,pattern,lenp)==0) return i;
+        if(strncmp(mask,pattern,lenp)==0) return i;
         name++ ;
         lenn-- ;
         i++ ;
