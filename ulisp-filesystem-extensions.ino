@@ -53,7 +53,7 @@ int selection(char *name, char *filemask )
 
     if(i>0)
     {
-        if((strncmp(file_pattern,name,i)!=0)  return 0 ;
+        if(strncmp(file_pattern,name,i)!=0)  return 0 ;
         if((filemask[i]==0x0)&&(name[i]==0x0)) return 1 ;
         if(filemask[i]!='*') return 0 ;
     }
