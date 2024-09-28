@@ -53,7 +53,7 @@ int selection(char *name, char *filemask )
 
     if(i>0)
     {
-        if(strncmp(file_pattern,name,i)!=0) return 0 ;
+        if(strcmp(file_pattern,name)!=0) return 0 ;
     }
 
     imaskpos += i+1 ; // next position after '*'
