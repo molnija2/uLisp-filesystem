@@ -48,35 +48,51 @@ int selection(char *name, char *filemask )
     char file_pattern[256] ;
     int i;
     int imaskpos = 0, inamepos = 0 ;
+    int find ;
     i = fillpattern(filemask, file_pattern);
     if(i==-1) return -1 ;
 
     if(i>0)
     {
-        if(strncmp(file_pattern,name,i)!=0)  return 0 ;
-        if((filemask[i]==0x0)&&(name[i]==0x0)) return 1 ;
-        if(filemask[i]!='*') return 0 ;
+        if(strncmp(file_pattern,name,i)!=0)
+            return 0 ;
     }
 
-    imaskpos += i+1 ; // next position after '*'
+    imaskpos += i ; // next position after '*'
+
+    if(filemask[imaskpos] == '*') {
+        find = 1 ;  // search continue
+        imaskpos++ ;
+    }
+    else find = 0 ;
+
     inamepos += i ;
     do{
         // take mask next fragment between '*' symbols
-        i = fillpattern(&filemask[imaskpos], file_pattern);  
-        if(i == -1 ) return 1 ;
-     
+        i = fillpattern(&filemask[imaskpos], file_pattern);
+
+        if(i == -1 ) {
+            if(name[inamepos]==0x0) return 1 ;
+            if(find) return 1 ;  // because mask last symbol is '*'
+        }
+
         int k = findpattern(file_pattern, &name[inamepos]);
         if(k==-1) return 0 ;
+        
         imaskpos += i ;
         inamepos += k ;
-        if(filemask[imaskpos] == '*') imaskpos++ ;
+        if(filemask[imaskpos] == '*') {
+            find = 1 ;  // search continue
+            imaskpos++ ;
+        }
         else
-            if(name[inamepos+i] != 0) return 0 ;  
+            if(name[inamepos+i] != 0) return 0 ;
             // the end of pattern but not end of name
-        
     }while(1) ;
+    
 return 0;
 }
+
 
 
 /*
