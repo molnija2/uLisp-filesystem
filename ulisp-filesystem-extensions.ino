@@ -160,8 +160,10 @@ void test_filename(char *name) {
 
 
 /*(probe-file pathspec)  tests whether a file exists.
-Returns nil if there is no file named pathspec,
+Returns nil if there is no file (directory) named pathspec,
 and otherwise returns the truename of pathspec.
+(probe-file "pathname")  - tests whether a file "pathname" exists
+(probe-file "pathname/")  -  tests whether a directory "pathname" exists
 */
 object *fn_probefile (object *args, object *env) {
 #if defined(sdcardsupport)
@@ -415,8 +417,10 @@ const char string_ensuredirectoriesexist[] = "ensure-directories-exist";
 
 const char doc_probefile[] = "(probe-file pathspec)\n"
 "tests whether a file exists.\n"
-" Returns nil if there is no file named pathspec,"
-" and otherwise returns the truename of pathspec.";
+" Returns nil if there is no file or directory named pathspec,"
+" and otherwise returns the truename of pathspec.\n"
+"(probe-file "pathname")  - tests whether a file "pathname" exists\n"
+"(probe-file "pathname/")  -  tests whether a directory "pathname" exists.";
 
 const char doc_deletefile[] = "(delete-file pathspec)\n"
 "delete specified file.\n"
