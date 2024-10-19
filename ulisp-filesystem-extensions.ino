@@ -14,19 +14,21 @@ int fillpattern(char *mask, char *pattern) {
     return i ;
 }
 
-int findpattern(char *pattern, char *mask) {
+
+int findpattern(char *pattern, char *name) {
     int i = 0 , lenp, lenn ;
     if (*pattern==0) return -1 ;
     lenp = strlen(pattern) ;
-    lenn = strlen(mask) ;
+    lenn = strlen(name) ;
     while (lenp<=lenn) {
-      if (strncmp(mask,pattern,lenp)==0) return i;
+      if (strncmp(name,pattern,lenp)==0) return i;
       name++ ;
       lenn-- ;
       i++ ;
     }
     return -1 ;
 }
+
 
 int selection(char *name, char *filemask ) {
     char file_pattern[256] ;
