@@ -3,7 +3,7 @@
 /*
  *   File search using '*'-type patterns
 */
-int fillpattern(char *mask, char *pattern) {
+int fillpattern (char *mask, char *pattern) {
     int i = 0 ;
     if (*mask==0) return -1 ;
     while ((*mask!=0)&&(*mask!='*')) {
@@ -15,7 +15,7 @@ int fillpattern(char *mask, char *pattern) {
 }
 
 
-int findpattern(char *pattern, char *name) {
+int findpattern (char *pattern, char *name) {
     int i = 0 , lenp, lenn ;
     if (*pattern==0) return -1 ;
     lenp = strlen(pattern) ;
